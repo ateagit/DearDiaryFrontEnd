@@ -31,7 +31,7 @@ class SideNav extends React.Component<{}, IState>
               Hi
             </IconButton>
                 <Hidden xsDown = {true}>
-                <Drawer  variant="permanent" anchor="left" className = "drawer">
+                <Drawer  variant="permanent" anchor="left" style = {{width:270}} PaperProps = {{style : {width:270}}}>
                 
                         <List>
                             <ListItem>

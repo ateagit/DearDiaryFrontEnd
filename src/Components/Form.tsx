@@ -1,3 +1,5 @@
+import { TextField } from '@material-ui/core';
+import { DateTimePicker } from 'material-ui-pickers';
 import * as React from "react";
 
 interface IAppState 
@@ -23,9 +25,13 @@ class Form extends React.Component<{}, IAppState>
     public render()
     {
         return(
-            <form>
+            <form style = {{padding:20, width:"100%"}}>
+                <TextField label="Event Name" id = "event-input" margin="normal" inputProps = {{style:{fontSize:30}}}/>
+                <TextField inputProps = {{style:{fontSize:30, lineHeight:1}}} fullWidth = {true} multiline = {true} rows = "20"/>
+                <DateTimePicker keyboard = {true} format="yyyy/MM/dd hh:mm A" disableOpenOnEnter = {true} mask={[/\d/,/\d/,/\d/,/\d/,'/',/\d/,/\d/,'/', /\d/, /\d/,' ',/\d/,/\d/,':',/\d/,/\d/,' ',/a|p/i,'M',]} />
+                {/*
                 <label>Event Name</label>
-                <input type="text" id = "event-input"placeholder = "Your Title Here"/>
+                <input type="text" id = "event-input" placeholder = "Your Title Here"/>
                 <label>Your Story </label>
                 <input type = "text" id = "story-input" placeholder = "Begin your story here"/>
                 <label>Starting Date </label>
@@ -34,7 +40,7 @@ class Form extends React.Component<{}, IAppState>
                 <input type = "datetime-local" id = "enddate-input"/>
                 <label>Images</label> 
                 <input type = "file" onChange = {this.FileUpload} id = "image-input"/>
-                <button type = "button" onClick = {this.UploadPost}>Upload</button> 
+                <button type = "button" onClick = {this.UploadPost}>Upload</button> */}
             </form>
         );
     }

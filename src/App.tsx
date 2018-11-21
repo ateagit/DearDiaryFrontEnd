@@ -1,8 +1,9 @@
 import { Grid } from '@material-ui/core';
 import * as React from 'react';
 import './App.css';
-import SideNav from './Components/SideNav';
 import Form from './Components/Form';
+import SideNav from './Components/SideNav';
+
 
 
 
@@ -26,10 +27,7 @@ class App extends React.Component<{}, IAppState> {
     // owns the js code as function called it. Hence we change what this refers to always point to
     // App.
     this.GetDiaryEntries();
-    this.FileUpload = this.FileUpload.bind(this);
-
-    this.UploadPost = this.UploadPost.bind(this); // this returns a new function in which the keyword 'this' always refers to App (which is 'this')
-
+    
     this.GetDiaryEntries = this.GetDiaryEntries.bind(this); // explicitly set this in GetDiaryEntries to refer to App
   }
 
@@ -46,7 +44,7 @@ class App extends React.Component<{}, IAppState> {
            <SideNav/>
           </Grid>
           <Grid item = {true} sm = {true} container = {true}>
-          <Form></Form>
+          <Form/>
           <button onClick = {this.GetDiaryEntries}>GET STUFF</button>
           </Grid>
         </Grid>
@@ -56,14 +54,7 @@ class App extends React.Component<{}, IAppState> {
     );
   }
   
-  private FileUpload(fileList: any)
-  {
-    console.log(fileList.target.files[0]);
-    // this, is the object that "owns" the JavaScript code.
-    this.setState({
-      uploadFileList: fileList.target.files
-    });
-  }
+  
 
   private GetDiaryEntries()
   {
@@ -80,47 +71,7 @@ class App extends React.Component<{}, IAppState> {
       console.log(this.state.diaryPosts);
     });
   }
-  // POST request for uploading data
-  private UploadPost()
-  {
-    const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/Upload";
-    
-    // Get information from inputs needed to make input
-    const eventInput = document.getElementById("event-input") as HTMLInputElement;
-    const storyInput = document.getElementById("story-input") as HTMLInputElement;
-    const startDateInput = document.getElementById("startdate-input") as HTMLInputElement;
-    const endDateInput = document.getElementById("enddate-input") as HTMLInputElement;
-    const imageInput = this.state.uploadFileList[0];
-    
-    if(eventInput == null || storyInput == null || startDateInput == null || endDateInput == null || imageInput == null)
-    {
-      return;
-    }
-    const formData = new FormData();
-
-    formData.append("Event", eventInput.value);
-    formData.append("Story", storyInput.value);
-    formData.append("StartTime", startDateInput.value);
-    formData.append("EndTime", endDateInput.value);
-    formData.append("Images", imageInput);
-    
-    fetch(url, {
-			body: formData,
-      headers: {
-        'cache-control': 'no-cache', 
-      },
-      method: 'POST',
-		})
-      .then((response : any) => {
-			if (!response.ok) {
-				// Error State
-				alert(response.statusText)
-			} else {
-        console.log("yeboi");
-				location.reload()
-			}
-		  })
-  }
+  
 }
 
 export default App;
