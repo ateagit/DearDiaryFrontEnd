@@ -1,11 +1,21 @@
+import MomentUtils from '@date-io/moment';
 import { TextField } from '@material-ui/core';
+
 import { DateTimePicker } from 'material-ui-pickers';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import moment from 'moment';
 import * as React from "react";
+
+moment.locale('fr');
 
 interface IAppState 
 {
-  diaryPosts: any[],
-  uploadFileList: any // This will hold the file lit. This includes the file name [0], last modified date, size and so on.
+    
+    clearedDate: null,
+    diaryPosts: any[],
+    selectedDate: any,
+    uploadFileList: any // This will hold the file lit. This includes the file name [0], last modified date, size and so on.
+  
 }
 
 class Form extends React.Component<{}, IAppState>
@@ -15,20 +25,34 @@ class Form extends React.Component<{}, IAppState>
         super(props);
         this.state =
         {
+            clearedDate: null,
             diaryPosts: [],
+            selectedDate: new Date(),
             uploadFileList: null
         }
 
         this.UploadPost = this.UploadPost.bind(this); // this returns a new function in which the keyword 'this' always refers to App (which is 'this')
         this.FileUpload = this.FileUpload.bind(this); // explicitly set this in GetDiaryEntries to refer to App
     }
+    // private handleDateChange = (date:any) => {
+     //   this.setState({ selectedDate: date });
+    // };
+    
+    
     public render()
     {
         return(
             <form style = {{padding:20, width:"100%"}}>
                 <TextField label="Event Name" id = "event-input" margin="normal" inputProps = {{style:{fontSize:30}}}/>
                 <TextField inputProps = {{style:{fontSize:30, lineHeight:1}}} fullWidth = {true} multiline = {true} rows = "20"/>
-                <DateTimePicker keyboard = {true} format="yyyy/MM/dd hh:mm A" disableOpenOnEnter = {true} mask={[/\d/,/\d/,/\d/,/\d/,'/',/\d/,/\d/,'/', /\d/, /\d/,' ',/\d/,/\d/,':',/\d/,/\d/,' ',/a|p/i,'M',]} />
+                <MuiPickersUtilsProvider utils={MomentUtils} >
+                <DateTimePicker
+            value={this.state.clearedDate}
+            onChange={this.handleClearedDateChange}
+            style={{fontSize:30, lineHeight:1}}
+            clearable = {true}
+          />
+          </MuiPickersUtilsProvider>
                 {/*
                 <label>Event Name</label>
                 <input type="text" id = "event-input" placeholder = "Your Title Here"/>
@@ -44,7 +68,9 @@ class Form extends React.Component<{}, IAppState>
             </form>
         );
     }
-
+    private handleClearedDateChange = (date:any) => {
+        this.setState({ clearedDate: date });
+        };
     private FileUpload(fileList: any)
     {
         console.log(fileList.target.files[0]);
