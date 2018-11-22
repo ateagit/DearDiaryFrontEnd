@@ -1,79 +1,90 @@
 import { Grid } from '@material-ui/core';
+import moment from 'moment';
 import * as React from 'react';
 import './App.css';
-import Form from './Components/Form';
+// import Form from './Components/Form';
 import SideNav from './Components/SideNav';
 import Summary from './Components/Summary';
 
-
-
-
-interface IAppState 
-{
+interface IState{
   diaryPosts: any[],
-  uploadFileList: any // This will hold the file lit. This includes the file name [0], last modified date, size and so on.
+  todaysPosts: any[],
 }
 
-class App extends React.Component<{}, IAppState> {
+class App extends React.Component<{}, IState> {
+
   constructor(props:any)
   {
-    super(props);
+    super(props),
     this.state = {
-      diaryPosts: [],
-      uploadFileList: null
+        diaryPosts: [],
+        todaysPosts: []
     }
-    // this refers to the object that owns the js code.
-    // in this.FileUpload, it refers to the App class as this instance of App class owns that code.
-    // If we didnt bind this, then when calling FileUpload, this would be set to null as no object
-    // owns the js code as function called it. Hence we change what this refers to always point to
-    // App.
     this.GetDiaryEntries();
+    this.GetDiaryEntries = this.GetDiaryEntries.bind(this);  // explicitly set this in GetDiaryEntries to refer to App
+    this.GetTodaysEntries = this.GetTodaysEntries.bind(this);
     
-    this.GetDiaryEntries = this.GetDiaryEntries.bind(this); // explicitly set this in GetDiaryEntries to refer to App
   }
-
-  
-  
-  
   public render() {
     return (
-     
-      
       <div className="App">
         <Grid container = {true} alignItems = "stretch" >
           <Grid item = {true}>
            <SideNav/>
           </Grid>
           <Grid item = {true} sm = {true} container = {true}>
-          <Form/>
-          <Summary/>
+          {/*<Form/>*/}
+          <Summary todaysPosts = {this.state.todaysPosts} />
           {/*<button onClick = {this.GetDiaryEntries}>GET STUFF</button>*/}
           </Grid>
         </Grid>
       </div>
-      
-      
     );
   }
   
-  
+  private GetTodaysEntries()
+  {
+      // this.state.todaysPosts.length = 0;
+      const newArray = this.state.todaysPosts;
+      this.state.diaryPosts.forEach((diaryPost:any) => {
+          
+          if(moment(diaryPost.StartTime).isValid())
+          {
+              const diaryDate = moment(diaryPost.StartTime, "YYYY/MM/DD hh:mm:ss A");
+              // let todaysDate = moment();
+
+              if(moment(diaryDate).isSame(moment(), 'day'))
+              {
+                newArray.push(diaryPost);
+                
+              }
+          
+              
+          }
+          
+      });
+      this.setState(
+        {
+          todaysPosts: newArray
+        });
+  }
 
   private GetDiaryEntries()
   {
-    const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary";
-    fetch(url, {
+  const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary";
+  fetch(url, {
       method: 'GET'
-    }).then(res => res.json())
-    .then(json => {
+  }).then(res => res.json())
+  .then(json => {
       this.setState(
-        {
+      {
           diaryPosts: json
-        }
+      }
       );
       console.log(this.state.diaryPosts);
-    });
+      this.GetTodaysEntries();
+  });
   }
-  
 }
 
 export default App;

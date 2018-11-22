@@ -1,6 +1,9 @@
+
 import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText, Toolbar} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+
 import * as React from "react";
+import mainLogo from './logo.svg'
 
 interface IState
 {
@@ -29,8 +32,7 @@ class SideNav extends React.Component<{}, IState>
                 
                         <List>
                             <ListItem>
-                                <img src = "logo.svg" />
-                                <ListItemText primary = "dearDiary" />
+                                <img src = {mainLogo} />
                             </ListItem>
                         </List>
                         <List component = "nav">
@@ -61,8 +63,8 @@ class SideNav extends React.Component<{}, IState>
                         
                             <List>
                                 <ListItem>
-                                    <img src = "logo.svg" />
-                                    <ListItemText primary = "LOGO" />
+                                    <img src = {mainLogo} alt = "logo"/>
+                                    
                                 </ListItem>
                             </List>
                             <List component = "nav">
