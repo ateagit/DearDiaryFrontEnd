@@ -3,7 +3,9 @@ import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText, Tool
 import MenuIcon from '@material-ui/icons/Menu';
 
 import * as React from "react";
-import mainLogo from './logo.svg'
+import { Link } from 'react-router-dom';
+import mainLogo from './logo.svg';
+
 
 interface IState
 {
@@ -36,17 +38,29 @@ class SideNav extends React.Component<{}, IState>
                             </ListItem>
                         </List>
                         <List component = "nav">
-                            <ListItem button = {true}>
-                                <ListItemText primary = "First Nav" className = "navText"/>
-                            </ListItem>
+                            <Link className = "anchor" to='/' >
+                                <ListItem button = {true}>
+                                
+                                    <ListItemText primary = "First Nav" className = "navText"/>
+                                
+                                </ListItem>
+                            </Link>
                             <Divider/>
-                            <ListItem button = {true}>
-                                <ListItemText primary = "Second Nav" className = "navText"/>
-                            </ListItem>
+                            <Link className = "anchor" to='/Form'>
+                                <ListItem button = {true}>
+                                    
+                                        <ListItemText primary = "Second Nav" className = "navText"/>
+                                    
+                                </ListItem>
+                            </Link>
                             <Divider/>
-                            <ListItem button = {true}>
-                                <ListItemText primary = "Third Nav" className = "navText"/>
-                            </ListItem>
+                            <Link className = "anchor" to='/Summary'>
+                                <ListItem button = {true}>
+                                    
+                                        <ListItemText primary = "Third Nav" className = "navText"/>
+                                    
+                                </ListItem>
+                            </Link>
                             <Divider/>
                         </List>
                     

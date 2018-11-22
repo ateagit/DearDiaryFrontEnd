@@ -110,7 +110,6 @@ class Form extends React.Component<{}, IAppState>
                     Add to diary
                 </Button>
             </form>
-            
         );
     }
     private handleStartDateChange = (date:any) => {

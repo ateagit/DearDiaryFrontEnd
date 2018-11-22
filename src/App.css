@@ -33,6 +33,17 @@
   padding:10%;
 }
 
+.dialog
+{
+  width:500px;
+}
+
+.anchor
+{
+  color:inherit;
+  text-decoration: none;
+  
+}
 .dropzone
 {
   position: relative; 
