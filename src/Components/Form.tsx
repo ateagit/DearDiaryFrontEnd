@@ -1,20 +1,21 @@
 import MomentUtils from '@date-io/moment';
-import { TextField } from '@material-ui/core';
-
+import { Button, Grid, InputBase, List,  ListItemText , TextField} from '@material-ui/core';
+// import AddIcon from '@material-ui/icons/Add';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import NavigationIcon from '@material-ui/icons/Navigation';
 import { DateTimePicker } from 'material-ui-pickers';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import moment from 'moment';
 import * as React from "react";
-
-moment.locale('fr');
+import Dropzone from 'react-dropzone'
+import { isNullOrUndefined } from 'util';
 
 interface IAppState 
 {
-    
-    clearedDate: null,
     diaryPosts: any[],
-    selectedDate: any,
-    uploadFileList: any // This will hold the file lit. This includes the file name [0], last modified date, size and so on.
+    endDate: any,
+    startDate: any,
+    uploadFileList: any[] // This will hold the file lit. This includes the file name [0], last modified date, size and so on.
   
 }
 
@@ -25,14 +26,16 @@ class Form extends React.Component<{}, IAppState>
         super(props);
         this.state =
         {
-            clearedDate: null,
             diaryPosts: [],
-            selectedDate: new Date(),
-            uploadFileList: null
+            endDate: moment(),
+            startDate: moment(),
+            uploadFileList: [] // a list of files to upload
         }
-
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
+        this.handleStartDateChange = this.handleEndDateChange.bind(this);
         this.UploadPost = this.UploadPost.bind(this); // this returns a new function in which the keyword 'this' always refers to App (which is 'this')
         this.FileUpload = this.FileUpload.bind(this); // explicitly set this in GetDiaryEntries to refer to App
+        this.onDrop = this.onDrop.bind(this);
     }
     // private handleDateChange = (date:any) => {
      //   this.setState({ selectedDate: date });
@@ -42,17 +45,54 @@ class Form extends React.Component<{}, IAppState>
     public render()
     {
         return(
-            <form style = {{padding:20, width:"100%"}}>
-                <TextField label="Event Name" id = "event-input" margin="normal" inputProps = {{style:{fontSize:30}}}/>
-                <TextField inputProps = {{style:{fontSize:30, lineHeight:1}}} fullWidth = {true} multiline = {true} rows = "20"/>
-                <MuiPickersUtilsProvider utils={MomentUtils} >
-                <DateTimePicker
-            value={this.state.clearedDate}
-            onChange={this.handleClearedDateChange}
-            style={{fontSize:30, lineHeight:1}}
-            clearable = {true}
-          />
-          </MuiPickersUtilsProvider>
+            <form style = {{padding:30}} className = "form">
+                <Grid container = {true} direction="column"  alignItems="flex-start" justify="flex-start">
+                    <Grid item = {true}>
+                        <TextField label="Event Name" id = "event-input" margin="normal" style = {{margin:16}} />
+                    </Grid>
+
+                    <Grid container = {true} item = {true} >
+                        <MuiPickersUtilsProvider utils={MomentUtils} >
+                            <DateTimePicker
+                                style = {{margin:16}} 
+                                label="Start Time"
+                                value={this.state.startDate}
+                                onChange={this.handleStartDateChange}
+                                clearable = {true}
+                                margin = "normal"
+                                format="YYYY/MM/DD hh:mm A"
+                            />
+                        </MuiPickersUtilsProvider>
+                        <MuiPickersUtilsProvider utils={MomentUtils} >
+                            <DateTimePicker
+                                style = {{margin:16}}
+                                label="End Time"
+                                value={this.state.endDate}
+                                onChange={this.handleEndDateChange}
+                                minDate={this.state.startDate}
+                                clearable = {true}
+                                margin = "normal"
+                                format="YYYY/MM/DD hh:mm A"
+                            />
+                        </MuiPickersUtilsProvider>
+                    </Grid>
+
+                </Grid>    
+                <InputBase  id = "story-input" style = {{ padding: 16, fontSize:21, boxSizing:"border-box" }} fullWidth = {true} multiline = {true} rows = "20" placeholder = "Start your story here..."/>
+                <Dropzone accept = 'image/*' onDropAccepted = {this.onDrop} className = "dropzone">
+                    <Grid container = {true} direction="column" justify="center" alignItems="center" >
+                        <CloudUploadIcon />
+                        <List dense = {true} disablePadding = {true}>
+                            <ListItemText primary = "Upload Images" style = {{padding:0}}/>
+                            {
+                            this.state.uploadFileList.map((f:any) => <ListItemText style = {{textAlign:"center"}} key={f.name} secondary = {f.name}/>)
+                            }
+                            
+                        </List>
+                    </Grid>
+                
+                </Dropzone>
+                
                 {/*
                 <label>Event Name</label>
                 <input type="text" id = "event-input" placeholder = "Your Title Here"/>
@@ -65,12 +105,31 @@ class Form extends React.Component<{}, IAppState>
                 <label>Images</label> 
                 <input type = "file" onChange = {this.FileUpload} id = "image-input"/>
                 <button type = "button" onClick = {this.UploadPost}>Upload</button> */}
+                <Button onClick = {this.UploadPost} variant = "extendedFab" color="secondary" style = {{position: "fixed", bottom: 25, right: 25, minHeight:75, minWidth:75, fontSize: 15,fontWeight:600}}>
+                    <NavigationIcon style = {{fontSize: 30, marginRight: 5}} />
+                    Add to diary
+                </Button>
             </form>
+            
         );
     }
-    private handleClearedDateChange = (date:any) => {
-        this.setState({ clearedDate: date });
-        };
+    private handleStartDateChange = (date:any) => {
+        this.setState({ startDate: date });
+    };
+
+    private handleEndDateChange = (date:any) => {
+        this.setState({ endDate: date });
+    };
+
+    private onDrop(fileList:any)
+    {
+        this.setState(
+            {
+                uploadFileList: fileList
+            }
+        );
+    }
+
     private FileUpload(fileList: any)
     {
         console.log(fileList.target.files[0]);
@@ -83,25 +142,40 @@ class Form extends React.Component<{}, IAppState>
     private UploadPost()
     {
       const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/Upload";
-      
+      console.log("hi");
       // Get information from inputs needed to make input
       const eventInput = document.getElementById("event-input") as HTMLInputElement;
       const storyInput = document.getElementById("story-input") as HTMLInputElement;
-      const startDateInput = document.getElementById("startdate-input") as HTMLInputElement;
-      const endDateInput = document.getElementById("enddate-input") as HTMLInputElement;
-      const imageInput = this.state.uploadFileList[0];
-      
-      if(eventInput == null || storyInput == null || startDateInput == null || endDateInput == null || imageInput == null)
+      const startDateInput = this.state.startDate.format();
+      const endDateInput = this.state.endDate.format();
+      const imageInput = this.state.uploadFileList;
+        console.log(eventInput.value);
+      if(eventInput.value == null || eventInput.value === ""|| startDateInput == null || endDateInput == null)
       {
+        alert("Please enter the required name and date fields");
         return;
       }
       const formData = new FormData();
-  
+      
       formData.append("Event", eventInput.value);
-      formData.append("Story", storyInput.value);
-      formData.append("StartTime", startDateInput.value);
-      formData.append("EndTime", endDateInput.value);
-      formData.append("Images", imageInput);
+      console.log(storyInput.value);
+      if(storyInput.value === "" || storyInput.value == null) 
+      {
+          formData.append("Story", "No Story Added");
+      }
+      else
+      {
+        formData.append("Story", storyInput.value);
+      }
+      formData.append("StartTime", startDateInput);
+      formData.append("EndTime", endDateInput);
+      if(!isNullOrUndefined(imageInput))
+      {
+        imageInput.forEach((file:any) => {
+            formData.append("Images", file)
+        });
+      }
+
       
       fetch(url, {
               body: formData,

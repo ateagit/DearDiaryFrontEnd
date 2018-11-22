@@ -22,20 +22,25 @@
   font-size: large;
 }
 
-.drawer
+.form
 {
-  width: 240px;
+  width:100%;
 }
 
-.drawer > div
+
+.dropzone
 {
-  width: 240px;
+  position: relative; 
+  display:flex;
+  min-height: 200px;
+  border-width: 2px; 
+  border-color:
+  rgb(102, 102, 102);
+  border-style: dashed;
+  border-radius: 1px;
+  margin:16px;
 }
 
-.navText > span
-{
-  font-size:15px;
-}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

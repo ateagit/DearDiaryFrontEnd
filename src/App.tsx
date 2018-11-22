@@ -3,6 +3,7 @@ import * as React from 'react';
 import './App.css';
 import Form from './Components/Form';
 import SideNav from './Components/SideNav';
+import Summary from './Components/Summary';
 
 
 
@@ -39,13 +40,14 @@ class App extends React.Component<{}, IAppState> {
      
       
       <div className="App">
-        <Grid container = {true} alignItems = "stretch">
+        <Grid container = {true} alignItems = "stretch" >
           <Grid item = {true}>
            <SideNav/>
           </Grid>
           <Grid item = {true} sm = {true} container = {true}>
           <Form/>
-          <button onClick = {this.GetDiaryEntries}>GET STUFF</button>
+          <Summary/>
+          {/*<button onClick = {this.GetDiaryEntries}>GET STUFF</button>*/}
           </Grid>
         </Grid>
       </div>

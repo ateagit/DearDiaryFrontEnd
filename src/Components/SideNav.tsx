@@ -1,4 +1,5 @@
-import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText} from '@material-ui/core';
+import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText, Toolbar} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import * as React from "react";
 
 interface IState
@@ -22,20 +23,14 @@ class SideNav extends React.Component<{}, IState>
        
         return(  
             <div>
-                <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.drawerToggle}
-              
-            >
-              Hi
-            </IconButton>
-                <Hidden xsDown = {true}>
+            
+                <Hidden smDown = {true}>
                 <Drawer  variant="permanent" anchor="left" style = {{width:270}} PaperProps = {{style : {width:270}}}>
                 
                         <List>
                             <ListItem>
-                                <ListItemText primary = "LOGO" />
+                                <img src = "logo.svg" />
+                                <ListItemText primary = "dearDiary" />
                             </ListItem>
                         </List>
                         <List component = "nav">
@@ -56,11 +51,17 @@ class SideNav extends React.Component<{}, IState>
                 </Drawer>
                 </Hidden>
                 
-                <Hidden smUp = {true}>
-                    <Drawer variant="temporary" anchor="left" open = {this.state.mobileOpen} onClose={this.drawerToggle}>
+                <Hidden mdUp = {true}>
+                    
+                        <Toolbar>
+                            <IconButton color="inherit" aria-label="Open drawer" onClick={this.drawerToggle} > <MenuIcon/>  </IconButton> 
+                        </Toolbar> 
+                    
+                    <Drawer variant="temporary" anchor="left" open = {this.state.mobileOpen} onClose={this.drawerToggle} PaperProps = {{style : {width:270}}}>
                         
                             <List>
                                 <ListItem>
+                                    <img src = "logo.svg" />
                                     <ListItemText primary = "LOGO" />
                                 </ListItem>
                             </List>
