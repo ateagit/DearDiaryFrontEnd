@@ -44,7 +44,21 @@
   text-decoration: none;
   
 }
-
+.login-but
+{
+  width:100%;
+}
+.input-container
+{
+  width:50%;
+  margin: 0 auto;
+  margin-top:16px;
+}
+#login-container
+{
+  width:100%;
+  padding:10%;
+}
 .search-button
 {
   margin: 0 auto !important;

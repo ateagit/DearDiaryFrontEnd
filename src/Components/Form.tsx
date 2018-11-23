@@ -10,6 +10,12 @@ import * as React from "react";
 import Dropzone from 'react-dropzone'
 import { isNullOrUndefined } from 'util';
 
+
+interface IProps
+{
+    
+}
+
 interface IAppState 
 {
     diaryPosts: any[],
@@ -140,7 +146,7 @@ class Form extends React.Component<{}, IAppState>
 
     private UploadPost()
     {
-      const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/Upload";
+      const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/Upload";
       console.log("hi");
       // Get information from inputs needed to make input
       const eventInput = document.getElementById("event-input") as HTMLInputElement;
@@ -168,6 +174,7 @@ class Form extends React.Component<{}, IAppState>
       }
       formData.append("StartTime", startDateInput);
       formData.append("EndTime", endDateInput);
+      formData.append("UserID", "1");
       if(!isNullOrUndefined(imageInput))
       {
         imageInput.forEach((file:any) => {
@@ -179,7 +186,7 @@ class Form extends React.Component<{}, IAppState>
       fetch(url, {
               body: formData,
         headers: {
-          'cache-control': 'no-cache', 
+            'cache-control': 'no-cache', 
         },
         method: 'POST',
           })

@@ -9,7 +9,8 @@ import mainLogo from './logo.svg';
 
 interface IProps
 {
-    darkMode: any
+    darkMode: any,
+    userID:any
 }
 interface IState
 {
@@ -43,27 +44,41 @@ class SideNav extends React.Component<IProps, IState>
                             <Link className = "anchor" to='/' >
                                 <ListItem button = {true}>
                                 
-                                    <ListItemText primary = "First Nav" className = "navText"/>
+                                    <ListItemText primary = "Home" className = "navText"/>
                                 
                                 </ListItem>
                             </Link>
                             <Divider/>
-                            <Link className = "anchor" to='/Form'>
+                            {this.props.userID !== null ? 
+                            <div>
+                                <Link className = "anchor" to='/Form'>
                                 <ListItem button = {true}>
                                     
-                                        <ListItemText primary = "Second Nav" className = "navText"/>
+                                        <ListItemText primary = "New Entry" className = "navText"/>
                                     
                                 </ListItem>
-                            </Link>
-                            <Divider/>
-                            <Link className = "anchor" to='/Summary'>
-                                <ListItem button = {true}>
-                                    
-                                        <ListItemText primary = "Third Nav" className = "navText"/>
-                                    
-                                </ListItem>
-                            </Link>
-                            <Divider/>
+                                </Link>
+                                <Divider/>
+                                <Link className = "anchor" to='/Summary'>
+                                    <ListItem button = {true}>
+                                        
+                                            <ListItemText primary = "Diary" className = "navText"/>
+                                        
+                                    </ListItem>
+                                </Link>
+                                <Divider/>
+                            </div>: 
+                            <div>
+                                <Link className = "anchor" to='/Login'>
+                                    <ListItem button = {true}>
+                                        
+                                            <ListItemText primary = "Login" className = "navText"/>
+                                        
+                                    </ListItem>
+                                </Link>
+                                <Divider/>
+                            </div>}
+                            
                         </List>
                         
                         <div style = {{flexGrow:1, position:"absolute", bottom: 10, left:20}}>

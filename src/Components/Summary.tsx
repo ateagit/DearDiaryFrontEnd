@@ -12,7 +12,8 @@ import { isNullOrUndefined } from 'util';
 interface IProps {
     focusedDays: any[],
     searchByEvent:any,
-    searchAll: any
+    searchAll: any, 
+    userID: any
 }
 
 interface IState {

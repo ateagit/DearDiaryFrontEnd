@@ -5,6 +5,9 @@ import { Route, Switch } from 'react-router';
 import { isNullOrUndefined } from 'util';
 import './App.css';
 import Form from './Components/Form';
+import Home from './Components/Home'
+import Login from './Components/Login'
+import Register from './Components/Register';
 import SideNav from './Components/SideNav';
 import Summary from './Components/Summary';
 
@@ -16,6 +19,7 @@ interface IState{
   distinctDates: any[],
   focusedDays: any[],
   todaysPosts: any[],
+  userID: any
 }
 
 class App extends React.Component<{}, IState> {
@@ -28,19 +32,30 @@ class App extends React.Component<{}, IState> {
       diaryPosts: [],
       distinctDates:["placeholder"],
       focusedDays: [],
-      todaysPosts: []
+      todaysPosts: [],
+      userID: null
     }
-    // this.GetDiaryEntries();
+    this.GetDiaryEntries();
 
     this.GetDiaryEntries = this.GetDiaryEntries.bind(this);  // explicitly set this in GetDiaryEntries to refer to App
     this.DistinctDates = this.DistinctDates.bind(this);
     this.GetDayEntries = this.GetDayEntries.bind(this);
     this.GetEventEntries = this.GetEventEntries.bind(this);
+    this.idChange = this.idChange.bind(this);
     
   }
   public render() {
-    const renderDocument = (props:any) => {
-      return <Summary focusedDays = {this.state.focusedDays} searchByEvent = {this.GetEventEntries} searchAll = {this.GetDiaryEntries} {...props} />
+    const renderSummaryDocument = (props:any) => {
+      return <Summary focusedDays = {this.state.focusedDays} searchByEvent = {this.GetEventEntries} searchAll = {this.GetDiaryEntries} userID = {this.state.userID} {...props} />
+    }
+    const renderLoginDocument = (props:any) => {
+      return <Login idChange = {this.idChange} {...props} />
+    }
+    const renderHomeDocument = (props:any) => {
+      return <Home idChange = {this.state.userID} {...props} />
+    }
+    const renderFormDocument = (props:any) => {
+      return <Form idChange = {this.state.userID} {...props} />
     }
     const setColourMode = () =>
     {
@@ -75,14 +90,20 @@ class App extends React.Component<{}, IState> {
         <div className="App">
           <Grid container = {true} alignItems = "stretch" >
             <Grid item = {true}>
-            <SideNav darkMode = {setColourMode} />
+            <SideNav userID = {this.state.userID} darkMode = {setColourMode} />
             </Grid>
             <Grid item = {true} sm = {true} container = {true}>
+            {this.state.userID !== null ? 
             <Switch>
-              <Route path = "/Form" component = {Form} />
-              <Route path = "/Summary" render={renderDocument} />
-              {/*<Summary focusedDays = {this.state.focusedDays}/>*/}
-            </Switch>
+              <Route exact = {true} path = "/" component = {renderHomeDocument} />
+              <Route path = "/Form" component = {renderFormDocument} />
+              <Route path = "/Summary" render={renderSummaryDocument} />  
+            </Switch>:
+            <Switch>
+              <Route exact = {true} path = "/" component = {renderHomeDocument} />
+              <Route path = "/Login"  component = {renderLoginDocument}/>
+              <Route path = "/Register"  component = {Register}/>
+            </Switch>}
             
             {/*<button onClick = {this.GetDiaryEntries}>GET STUFF</button>*/}
             
@@ -93,9 +114,18 @@ class App extends React.Component<{}, IState> {
     );
   }
   
+  private idChange(id:any)
+  {
+    this.setState(
+      {
+        userID: id
+      }
+    )
+    console.log(this.state.userID);
+  }
   private DistinctDates()
   {
-    const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/distinctDates";
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/distinctDates";
 
     fetch(url, {method: 'GET'}).then(
       res => res.json()
@@ -120,7 +150,7 @@ class App extends React.Component<{}, IState> {
               distDates.push(moment(date).format("YYYY/MM/DD hh:mm:ss A"))
             }
           }
-          // console.log("THE DISTINCT DATES ARE", distDates);
+           console.log("THE DISTINCT DATES ARE", distDates);
           this.setState(
             {
               distinctDates: distDates
@@ -180,7 +210,7 @@ class App extends React.Component<{}, IState> {
 
   private GetDiaryEntries()
   {
-    const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary";
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary";
     fetch(url, {
         method: 'GET'
     }).then(res => res.json())
@@ -197,7 +227,7 @@ class App extends React.Component<{}, IState> {
   private GetEventEntries(event: any)
   {
     
-    const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/SearchByEventName/" + event;
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/SearchByEventName/" + event;
       
     fetch(url, {
         method: 'GET'
