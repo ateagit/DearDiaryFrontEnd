@@ -1,6 +1,7 @@
 import { createMuiTheme, CssBaseline, Grid, MuiThemeProvider } from '@material-ui/core';
 import moment from 'moment';
 import * as React from 'react';
+
 import { Route, Switch } from 'react-router';
 import { isNullOrUndefined } from 'util';
 import './App.css';
@@ -19,7 +20,7 @@ interface IState{
   distinctDates: any[],
   focusedDays: any[],
   todaysPosts: any[],
-  userID: any
+  userID: any,
 }
 
 class App extends React.Component<{}, IState> {
@@ -33,7 +34,7 @@ class App extends React.Component<{}, IState> {
       distinctDates:["placeholder"],
       focusedDays: [],
       todaysPosts: [],
-      userID: null
+      userID: null,
     }
     if(this.state.userID !== null)
     {

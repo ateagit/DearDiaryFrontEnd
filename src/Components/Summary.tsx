@@ -194,7 +194,7 @@ class Summary extends React.Component<IProps, IState>
             return mappedList;
         }
         mappedList = mappedList.map((object:any) => (
-            <img key = {"img" + object.Id} src = {object.ImageURL} style = {{objectFit: "cover",  maxHeight: 100}}/>
+            <img key = {"img" + object.Id} src = {object.ImageURL} style = {{objectFit: "cover",  maxHeight: 100, marginTop:30}}/>
         ));
         return mappedList;
     }
@@ -231,14 +231,14 @@ class Summary extends React.Component<IProps, IState>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails style = {{display:"block"}}>
                             <Typography>
-                                Start Time: 
-                                {object.StartTime}
+                                Start Time  : 
+                                {moment(object.StartTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                             </Typography>
                             <Typography>
-                                Finishing Time:
-                                {object.EndTime}
+                                Finishing Time  :
+                                {moment(object.EndTime).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                             </Typography>
-                            <Typography>
+                            <Typography variant = "h6" style = {{marginTop:20}}>
                                 {object.StoryUrl}
                             </Typography>
                                 {
