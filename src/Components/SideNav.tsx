@@ -1,5 +1,5 @@
 
-import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText, Toolbar} from '@material-ui/core';
+import { Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemText, Switch, Toolbar, Typography} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 
 import * as React from "react";
@@ -7,11 +7,15 @@ import { Link } from 'react-router-dom';
 import mainLogo from './logo.svg';
 
 
+interface IProps
+{
+    darkMode: any
+}
 interface IState
 {
     mobileOpen: any
 }
-class SideNav extends React.Component<{}, IState>
+class SideNav extends React.Component<IProps, IState>
 {
     constructor(props:any)
     {
@@ -22,10 +26,8 @@ class SideNav extends React.Component<{}, IState>
         }
         this.drawerToggle = this.drawerToggle.bind(this);
     }
-    
     public render()
     {
-       
         return(  
             <div>
             
@@ -63,7 +65,12 @@ class SideNav extends React.Component<{}, IState>
                             </Link>
                             <Divider/>
                         </List>
-                    
+                        
+                        <div style = {{flexGrow:1, position:"absolute", bottom: 10, left:20}}>
+                            <Typography style = {{display: "inline"}}> Dark Mode</Typography>
+                            <Switch onChange = {this.props.darkMode} />
+                        </div>
+       
                 </Drawer>
                 </Hidden>
                 
@@ -75,25 +82,28 @@ class SideNav extends React.Component<{}, IState>
                     
                     <Drawer variant="temporary" anchor="left" open = {this.state.mobileOpen} onClose={this.drawerToggle} PaperProps = {{style : {width:270}}}>
                         
-                            <List>
-                                <ListItem>
-                                    <img src = {mainLogo} alt = "logo"/>
-                                    
-                                </ListItem>
-                            </List>
-                            <List component = "nav">
-                                <ListItem button = {true}>
-                                    <ListItemText primary = "First Nav" />
-                                </ListItem>
-                                <ListItem button = {true}>
-                                    <ListItemText primary = "Second Nav" />
-                                </ListItem>
-                                <ListItem button = {true}>
-                                    <ListItemText primary = "Third Nav" />
-                                </ListItem>
-                                <Divider/>
-                            </List>
-                        
+                        <List>
+                            <ListItem>
+                                <img src = {mainLogo} alt = "logo"/>
+                                
+                            </ListItem>
+                        </List>
+                        <List component = "nav">
+                            <ListItem button = {true}>
+                                <ListItemText primary = "First Nav" />
+                            </ListItem>
+                            <ListItem button = {true}>
+                                <ListItemText primary = "Second Nav" />
+                            </ListItem>
+                            <ListItem button = {true}>
+                                <ListItemText primary = "Third Nav" />
+                            </ListItem>
+                            <Divider/>
+                        </List>
+                        <div style = {{flexGrow:1, position:"absolute", bottom: 10, left:20}}>
+                            <Typography style = {{display: "inline"}}> Dark Mode</Typography>
+                            <Switch onChange = {this.props.darkMode}/>
+                        </div>
                     </Drawer>
                 </Hidden>
             </div>

@@ -1,14 +1,18 @@
 import MomentUtils from '@date-io/moment';
-import {Button, Dialog, DialogTitle, ExpansionPanel, ExpansionPanelActions, ExpansionPanelDetails, ExpansionPanelSummary, InputBase, TextField, Typography } from '@material-ui/core';
+import {Button, Dialog, DialogTitle, ExpansionPanel, ExpansionPanelActions, ExpansionPanelDetails, ExpansionPanelSummary,IconButton, Input, InputAdornment, InputBase, InputLabel, TextField, Typography } from '@material-ui/core';
 import { DateTimePicker } from 'material-ui-pickers';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import moment from 'moment';
+import MediaStreamRecorder from 'msr';
 import * as React from "react";
 import { isNullOrUndefined } from 'util';
 
 
+
 interface IProps {
-    focusedDays: any[]
+    focusedDays: any[],
+    searchByEvent:any,
+    searchAll: any
 }
 
 interface IState {
@@ -46,12 +50,96 @@ class Summary extends React.Component<IProps, IState>
             this.setState({ endDate: date });
         };
 
+        const searchByEvent = ()  => {
+            const textBox = document.getElementById("event-search") as HTMLInputElement
+            if (textBox === null || textBox.value === "") {
+                console.log("hi");
+                this.props.searchAll()  
+                return;
+            }
+            const event = textBox.value 
+            this.props.searchByEvent(event)  
+        }
 
+        const searchByEventVoice = (tag: any) =>
+        {
+            const mediaConstraints = {
+                audio: true
+            }
+            const onMediaSuccess = (stream: any) => {
+                const mediaRecorder = new MediaStreamRecorder(stream);
+                mediaRecorder.mimeType = 'audio/wav'; // check this line for audio/wav
+                mediaRecorder.ondataavailable = (blob: any) => {
+                    mediaRecorder.stop()
+                    PostAudio(blob);
+                }
+                mediaRecorder.start(3000);
+            }
+            
+            navigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError)
+        
+            function onMediaError(e: any) {
+                console.error('media error', e);
+            }
+        }
+
+    const PostAudio = (blob: any) =>
+    {
+        let accessToken: any;
+        fetch('https://westus.api.cognitive.microsoft.com/sts/v1.0/issueToken', {
+            headers: {
+                'Content-Length': '0',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Ocp-Apim-Subscription-Key': '7858d17484424d4d93d43c177c1268ce'
+            },
+            method: 'POST'
+        }).then((response) => {
+            // console.log(response.text())
+            return response.text()
+        }).then((response) => {
+            console.log(response)
+            accessToken = response
+        }).catch((error) => {
+            console.log("Error", error)
+        });
+           // posting audio
+           fetch('https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US', {
+            body: blob, // this is a .wav audio file    
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer' + accessToken,
+                'Content-Type': 'audio/wav;codec=audio/pcm; samplerate=16000',
+                'Ocp-Apim-Subscription-Key': '7858d17484424d4d93d43c177c1268ce'
+            },    
+            method: 'POST'
+        }).then((res) => {
+            return res.json()
+        }).then((res: any) => {
+            const textBox = document.getElementById("event-search") as HTMLInputElement
+            textBox.value = (res.DisplayText as string).slice(0, -1)
+        }).catch((error) => {
+            console.log("Error", error)
+        });
+        
+    }
         return(
             <div className = "detail-container">   
                 <Typography variant = "h2" style = {{marginBottom:30}}>Your Diary</Typography>
-                
-                <div>
+                <InputLabel htmlFor = "event-search" style = {{marginTop:10}}>Event search:   </InputLabel>
+                    <Input id = "event-search"  endAdornment = {
+                        <InputAdornment position="end">
+                            <IconButton onClick = {searchByEventVoice}>
+                                <i className="fa fa-microphone" />
+                            </IconButton>
+                        </InputAdornment>
+                    }  />
+                    <Button 
+                    variant="outlined"
+                    color="primary"
+                    className = "search-button"
+                    onClick = {searchByEvent}
+                    style = {{margin:10}}> Search </Button>
+                <div style = {{marginTop:30}}>
                     {this.getList()}
                 </div>
                 <ExpansionPanel>
@@ -125,14 +213,16 @@ class Summary extends React.Component<IProps, IState>
     
     private getList()
     {
+        
         const list = this.props.focusedDays;
+        // console.log("THE FOCUSED DAYS INCLUDE", list);
         const mappedList:any[] = [];
         
         if(isNullOrUndefined(list) || list.length === 0)
         {
             return mappedList;
         }
-        console.log(list);
+        // console.log("THE PASSED DAYS INCLUDE", list);
         for(let i = 0; i !== list.length; ++i)
         {
             // Go through each distinct day
