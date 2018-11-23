@@ -35,7 +35,10 @@ class App extends React.Component<{}, IState> {
       todaysPosts: [],
       userID: null
     }
-    this.GetDiaryEntries();
+    if(this.state.userID !== null)
+    {
+      this.GetDiaryEntries();
+    }
 
     this.GetDiaryEntries = this.GetDiaryEntries.bind(this);  // explicitly set this in GetDiaryEntries to refer to App
     this.DistinctDates = this.DistinctDates.bind(this);
@@ -52,10 +55,10 @@ class App extends React.Component<{}, IState> {
       return <Login idChange = {this.idChange} {...props} />
     }
     const renderHomeDocument = (props:any) => {
-      return <Home idChange = {this.state.userID} {...props} />
+      return <Home userID = {this.state.userID} {...props} />
     }
     const renderFormDocument = (props:any) => {
-      return <Form idChange = {this.state.userID} {...props} />
+      return <Form userID = {this.state.userID} getDates = {this.GetDiaryEntries} {...props} />
     }
     const setColourMode = () =>
     {
@@ -119,13 +122,17 @@ class App extends React.Component<{}, IState> {
     this.setState(
       {
         userID: id
+      },
+      () =>
+      {
+        this.GetDiaryEntries();
       }
     )
     console.log(this.state.userID);
   }
   private DistinctDates()
   {
-    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/distinctDates";
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/distinctDates/" + this.state.userID;
 
     fetch(url, {method: 'GET'}).then(
       res => res.json()
@@ -171,29 +178,33 @@ class App extends React.Component<{}, IState> {
       const tempArrayOfArrays:any[] = [];
       const distinctDays = this.state.distinctDates;
       console.log(distinctDays);
+      console.log(this.state.diaryPosts);
       for(let i = 0; i !== distinctDays.length; ++i)
       {
         // Go through each distinct day
         const curDate = moment(distinctDays[i], "YYYY/MM/DD hh:mm:ss A");
 
         // Find which of the objects share the same distinct day, append those to an array.
-
-        this.state.diaryPosts.forEach((post:any) => {
-          if(!isNullOrUndefined(post))
-          {
-              // What is the start day for this object?
-            const diaryDate = moment(post.StartTime, "YYYY/MM/DD hh:mm:ss A");
-            
-            // Check if these two dates lie on the same day
-            // console.log("We are comparing", post.Id, "with time", diaryDate.format("YYYY/MM/DD"), "and", curDate.format("YYYY/MM/DD"))
-            if(moment(diaryDate).isSame(curDate, 'day'))
+        if(this.state.diaryPosts.length !== 0)
+        {
+          this.state.diaryPosts.forEach((post:any) => {
+            if(!isNullOrUndefined(post))
             {
-              // We found an equal day so push that object onto the array
-              // console.log("Checking: ", post.Id ,diaryDate.format("YYYY/MM/DD hh:mm:ss A"), "and", curDate.format("YYYY/MM/DD hh:mm:ss A"));
-              tempSameDayArray.push(post);
+                // What is the start day for this object?
+              const diaryDate = moment(post.StartTime, "YYYY/MM/DD hh:mm:ss A");
+              
+              // Check if these two dates lie on the same day
+              // console.log("We are comparing", post.Id, "with time", diaryDate.format("YYYY/MM/DD"), "and", curDate.format("YYYY/MM/DD"))
+              if(moment(diaryDate).isSame(curDate, 'day'))
+              {
+                // We found an equal day so push that object onto the array
+                // console.log("Checking: ", post.Id ,diaryDate.format("YYYY/MM/DD hh:mm:ss A"), "and", curDate.format("YYYY/MM/DD hh:mm:ss A"));
+                tempSameDayArray.push(post);
+              }
             }
-          }
-        })
+          })
+        }
+        
         // Push the list of objects that lie on the same day into another list
         if(!(tempSameDayArray.length === 0))
         {
@@ -210,7 +221,7 @@ class App extends React.Component<{}, IState> {
 
   private GetDiaryEntries()
   {
-    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary";
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/" + this.state.userID;
     fetch(url, {
         method: 'GET'
     }).then(res => res.json())
@@ -218,16 +229,19 @@ class App extends React.Component<{}, IState> {
         this.setState(
         {
             diaryPosts: json
+        },() => {
+          console.log(this.state.diaryPosts);
+          this.DistinctDates();
         }
         );
         console.log(this.state.diaryPosts);
-        this.DistinctDates();
+         
     });
   }
   private GetEventEntries(event: any)
   {
     
-    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/SearchByEventName/" + event;
+    const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/SearchByEventName/" + event + "/" + this.state.userID;
       
     fetch(url, {
         method: 'GET'
@@ -239,7 +253,9 @@ class App extends React.Component<{}, IState> {
         }
         );
         console.log(this.state.diaryPosts);
-        this.DistinctDates();
+  
+    }).then(() => {
+       this.DistinctDates();
     });
     }
 }

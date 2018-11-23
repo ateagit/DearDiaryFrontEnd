@@ -17,7 +17,7 @@ class Register extends React.Component<IProps,{}>
             <div id = "login-container">
             <Typography variant = "h2"> Welcome to Dear Diary </Typography>
             {
-                this.props.userID === null ? 
+                this.props.userID !== null ? 
                 <Typography variant = "h6" style = {{marginTop:20}}> 
                     Thanks for Logging in, you can enter a new
                     entry and view your diary by using the tabs

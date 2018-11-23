@@ -13,7 +13,9 @@ import { isNullOrUndefined } from 'util';
 
 interface IProps
 {
-    
+    userID:any,
+    history:any,
+    getDates:any
 }
 
 interface IAppState 
@@ -25,7 +27,7 @@ interface IAppState
   
 }
 
-class Form extends React.Component<{}, IAppState>
+class Form extends React.Component<IProps, IAppState>
 {
     constructor(props: any)
     {
@@ -174,7 +176,7 @@ class Form extends React.Component<{}, IAppState>
       }
       formData.append("StartTime", startDateInput);
       formData.append("EndTime", endDateInput);
-      formData.append("UserID", "1");
+      formData.append("UserID", this.props.userID);
       if(!isNullOrUndefined(imageInput))
       {
         imageInput.forEach((file:any) => {
@@ -195,8 +197,8 @@ class Form extends React.Component<{}, IAppState>
                   // Error State
                   alert(response.statusText)
               } else {
-          console.log("yeboi");
-                  location.reload()
+                this.props.getDates();
+                this.props.history.push('/')
               }
             })
     }

@@ -11,6 +11,7 @@ import { isNullOrUndefined } from 'util';
 
 interface IProps {
     focusedDays: any[],
+    history:any,
     searchByEvent:any,
     searchAll: any, 
     userID: any
@@ -144,20 +145,6 @@ class Summary extends React.Component<IProps, IState>
                     {this.getList()}
                 </div>
                 <ExpansionPanel>
-                    <ExpansionPanelSummary>
-                        <Typography>
-                            Hi
-                        </Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                        <Typography>
-                            Hi
-                        </Typography>
-                    </ExpansionPanelDetails>
-                    <ExpansionPanelActions>
-                        <Button variant="outlined" onClick = {this.handleClickOpen.bind(this,1)} color="primary">Edit</Button>
-                        <Button variant = "contained" color="secondary" onClick = {this.handleClickOpen.bind(this, 1)}>Delete</Button>
-                    </ExpansionPanelActions>
                     <Dialog open = {this.state.modalOpen} onClose = {handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle className = "dialog" id="form-dialog-title"> Edit your post </DialogTitle>
                             <TextField label="Event Name" id = "event-input" margin="normal" style = {{margin:16}} />
@@ -216,7 +203,7 @@ class Summary extends React.Component<IProps, IState>
     {
         
         const list = this.props.focusedDays;
-        // console.log("THE FOCUSED DAYS INCLUDE", list);
+        console.log("THE FOCUSED DAYS INCLUDE", list);
         const mappedList:any[] = [];
         
         if(isNullOrUndefined(list) || list.length === 0)
@@ -273,7 +260,7 @@ class Summary extends React.Component<IProps, IState>
 
     private DeletePost(id:any)
     {
-      const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/" + id;
+      const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/" + id;
       
       fetch(url, {
         method: 'DELETE',
@@ -283,15 +270,15 @@ class Summary extends React.Component<IProps, IState>
                   // Error State
                   alert(response.statusText)
               } else {
-          console.log("yeboi");
-                  location.reload()
+                this.props.searchAll();
+                this.props.history.push('/Summary')
               }
             })
     }
     
     private UpdatePost()
     {
-      const url = "https://msadeardiaryapi.azurewebsites.net/api/Diary/" + this.state.focusedId;
+      const url = "https://deardiaryapimsa.azurewebsites.net/api/Diary/" + this.state.focusedId;
       // Get information from inputs needed to make input
       const eventInput = document.getElementById("event-input") as HTMLInputElement;
       const storyInput = document.getElementById("story-input") as HTMLInputElement;
@@ -319,7 +306,8 @@ class Summary extends React.Component<IProps, IState>
             "eventName": eventInput.value,
             "id": this.state.focusedId,
             "startTime": startDateInput,
-            "storyUrl": storyInputVal
+            "storyUrl": storyInputVal,
+            "userId": this.props.userID
         }),
         headers: {
         'Content-Type': 'application/json',
@@ -333,8 +321,13 @@ class Summary extends React.Component<IProps, IState>
                   // Error State
                   alert(response.statusText)
               } else {
-          console.log("yeboi");
-                  location.reload()
+                this.props.searchAll();
+                this.props.history.push('/Summary')
+                this.setState(
+                    {
+                        modalOpen:false
+                    }
+                );
               }
             })
     }

@@ -3,9 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { isNullOrUndefined } from 'util';
 
+
 interface IProps
 {
-    idChange:any
+    idChange:any,
+    history:any
 }
 
 class Login extends React.Component<IProps,{}>
@@ -86,11 +88,15 @@ class Login extends React.Component<IProps,{}>
                 const x = data;
                 if(!isNullOrUndefined(data) && data.length !== 0)
                 {
-                    this.props.idChange(x)
+                    this.props.idChange(x);
+                    
+                    this.props.history.push('/')
+                    
                 }
                 else
                 {
                     alert("Invalid Username or Password");
+                    
                 }
             });
     }
