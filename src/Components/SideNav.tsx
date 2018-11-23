@@ -4,7 +4,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import * as React from "react";
 import { Link } from 'react-router-dom';
-import mainLogo from './logo.svg';
+import mainLogo from './logo1.svg';
 
 
 interface IProps
@@ -33,7 +33,7 @@ class SideNav extends React.Component<IProps, IState>
             <div>
             
                 <Hidden smDown = {true}>
-                <Drawer  variant="permanent" anchor="left" style = {{width:270}} PaperProps = {{style : {width:270}}}>
+                <Drawer  variant="permanent" anchor="left" style = {{width:270}} PaperProps = {{style : {width:270, borderRightColor:"rgb(195, 195, 195)"}}}>
                 
                         <List>
                             <ListItem>
